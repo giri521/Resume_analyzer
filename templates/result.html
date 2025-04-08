@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analysis Results</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+    body {
+    background-color: #121212;
+    color: white;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    margin-top: 20px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#skillPieChart {
+    max-width: 300px;
+    max-height: 300px;
+    margin: auto;
+    display: block;
+}
+
+/* Resume Preview Box */
+.preview-box {
+    background: #1e1e1e;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.1);
+    margin: 20px auto;
+    width: 70%;
+    transition: transform 0.3s ease-in-out;
+}
+
+.preview-box:hover {
+    transform: scale(1.02);
+}
+
+iframe {
+    width: 100%;
+    height: 500px;
+    border: none;
+    border-radius: 8px;
+}
+
+/* Data Display Box */
+.box {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: left;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+}
+
+/* Name Container */
+.green-box {
+    background: linear-gradient(45deg, #00c853, #b2ff59);
+    color: black;
+    padding: 12px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0, 200, 83, 0.5);
+}
+
+/* Dropdown & Selection */
+.job-dropdown, .skill-selection {
+    margin-top: 10px;
+    padding: 10px;
+    background: #333;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.job-dropdown:hover, .skill-selection:hover {
+    background: #444;
+}
+
+/* Buttons */
+button {
+    background: linear-gradient(45deg, #00aaff, #0077cc);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 5px 10px rgba(0, 170, 255, 0.3);
+}
+
+button:hover {
+    background: linear-gradient(45deg, #0077cc, #005f99);
+    transform: translateY(-3px);
+}
+
+/* Icons for UI Enhancement */
+.icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #222;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00aaff;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0077cc;
+}
+  body { 
+    font-family: Arial, sans-serif; 
+    background: #121212; 
+    color: #fff; 
+    text-align: center; 
+    padding: 20px;
+}
+.container { 
+    width: 60%; 
+    margin: 20px auto; 
+    background: #1e1e1e; 
+    padding: 20px; 
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+.score-box { 
+    width: 60%;
+    background: #1e1e1e; 
+    padding: 20px; 
+    border-radius: 10px; 
+    margin: 20px auto;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.2);
+}
+.score-number {
+    font-size: 36px;
+    font-weight: bold;
+    color: #4CAF50; 
+}
+.progress-bar {
+    width: 100%;
+    background: #333;
+    border-radius: 5px;
+    margin-top: 10px;
+    height: 15px;
+    overflow: hidden;
+    position: relative;
+}
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    transition: width 2s ease-in-out;
+}
+// Add this CSS to your style section
+.skill-roadmap-item {
+    background: #2a2a2a;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.video-preview {
+    margin: 15px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.skill-divider {
+    border: 0;
+    height: 1px;
+    background: #444;
+    margin: 25px 0;
+}
+
+.roadmap-steps {
+    margin-top: 15px;
+}
+
+.roadmap-steps li {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+</style>
+</head>
+<body>
+
+    <div class="container">
+<h1>SKILL GAP ANALYSIS</h1>
+        
+    <!-- Name Display -->
+    <div class="box green-box">
+        <i class="fas fa-user"></i> Hello, {{ name }}
+    </div>
+
+    <h3><i class="fas fa-file-alt"></i> Resume Preview:</h3>
+    {% if resume_filename.endswith('.pdf') %}
+        <iframe src="{{ url_for('uploaded_file', filename=resume_filename) }}" width="100%" height="500px"></iframe>
+    {% else %}
+        <p>Preview is available only for PDFs.</p>
+    {% endif %}
+<div class="score-box">
+            <h3>Resume Score</h3>
+            <div class="score-number" id="animated-score">0</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-bar"></div>
+            </div>
+        </div>    <!-- Extracted Resume Details -->
+    <div class="box">
+        <h3><i class="fas fa-info-circle"></i> Extracted Resume Details</h3>
+        <p><strong>Email:</strong> {{ email }}</p>
+        <p><strong>Phone:</strong> {{ phone }}</p>
+        <p><strong>Education:</strong> {{ education }}</p>
+    </div>
+
+    <!-- Extracted Skills -->
+    <div class="box">
+        <h3><i class="fas fa-lightbulb"></i> Your Extracted Skills</h3>
+        <ul>
+            {% for skill in skills %}
+                <li><i class="fas fa-check-circle"></i> {{ skill }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Job Role Selection -->
+    <div class="box">
+        <h3><i class="fas fa-briefcase"></i> Select Your Job Role</h3>
+        <select id="job-role" class="job-dropdown">
+            <option value="">-- Select Job Role --</option>
+            <option value="Data Scientist">Data Scientist</option>
+            <option value="Web Developer">Web Developer</option>
+            <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+            <option value="Cyber Security Expert">Cyber Security Expert</option>
+            <option value="AI Engineer">AI Engineer</option>
+            <option value="DevOps Engineer">DevOps Engineer</option>
+            <option value="Blockchain Developer">Blockchain Developer</option>
+            <option value="Cloud Engineer">Cloud Engineer</option>
+        </select>
+    </div>
+
+    <!-- Required Skills for Job Role -->
+    <div class="box" id="required-skills" style="display:none;">
+        <h3><i class="fas fa-tools"></i> Required Skills for <span id="selected-job"></span></h3>
+        <h4>Basic Skills:</h4>
+        <ul id="basic-skills"></ul>
+        <h4>Advanced Skills:</h4>
+        <ul id="advanced-skills"></ul>
+        <h4>Pro Level Skills:</h4>
+        <ul id="pro-skills"></ul>
+    </div>
+
+    <!-- Skill Comparison -->
+    <div class="box" id="skill-comparison" style="display:none;">
+        <h3><i class="fas fa-tasks"></i> Skill Comparison</h3>
+        <h4>Skills You Already Have:</h4>
+        <ul id="matched-skills"></ul>
+        <h4>Skills You Need to Improve:</h4>
+        <ul id="missing-skills"></ul>
+
+        <!-- Pie Chart -->
+        <canvas id="skillPieChart"></canvas>
+    </div>
+
+    <!-- Skill Improvement Selection -->
+    <div class="box" id="skill-selection-box" style="display:none;">
+        <h3><i class="fas fa-chart-line"></i> Select Skills You Want to Improve</h3>
+        <select id="improve-skills" multiple class="skill-selection"></select>
+        <br><br>
+        <button onclick="generateRoadmap()" class="btn"><i class="fas fa-road"></i> Generate Learning Roadmap</button>
+    </div>
+
+    <!-- Roadmap -->
+    <div class="box" id="roadmap-box" style="display:none;">
+        <h3><i class="fas fa-map-signs"></i> Learning Roadmap</h3>
+        <ol id="roadmap-steps"></ol>
+    </div>
+</div>
+       
+    <script>
+        // Job Role Skills Data
+        const jobSkills = {
+            "Data Scientist": {
+                "basic": ["Python", "SQL", "Statistics"],
+                "advanced": ["Machine Learning", "Data Visualization", "Pandas"],
+                "pro": ["Deep Learning", "Big Data", "NLP"]
+            },
+            "Web Developer": {
+                "basic": ["HTML", "CSS", "JavaScript"],
+                "advanced": ["React", "Node.js", "REST APIs"],
+                "pro": ["Docker", "AWS", "Microservices"]
+            },
+            "Machine Learning Engineer": {
+                "basic": ["Python", "TensorFlow", "Scikit-learn"],
+                "advanced": ["Deep Learning", "Neural Networks", "Optimization"],
+                "pro": ["Reinforcement Learning", "Edge AI", "AutoML"]
+            },
+            "Cyber Security Expert": {
+                "basic": ["Networking", "Python", "Ethical Hacking"],
+                "advanced": ["Penetration Testing", "Cryptography", "SIEM"],
+                "pro": ["Forensics", "Reverse Engineering", "Cyber Threat Intelligence"]
+            },
+            "AI Engineer": {
+                "basic": ["Python", "Deep Learning", "Computer Vision"],
+                "advanced": ["Transformers", "GANs", "MLOps"],
+                "pro": ["AGI", "AI Research", "Quantum AI"]
+            },
+            "DevOps Engineer": {
+                "basic": ["Linux", "Docker", "Bash Scripting"],
+                "advanced": ["Kubernetes", "CI/CD Pipelines", "Terraform"],
+                "pro": ["Cloud Security", "Serverless Architectures", "DevSecOps"]
+            },
+            "Blockchain Developer": {
+                "basic": ["Solidity", "Smart Contracts", "Ethereum"],
+                "advanced": ["Hyperledger", "NFT Development", "DeFi Protocols"],
+                "pro": ["Zero-Knowledge Proofs", "Consensus Algorithms", "Blockchain Security"]
+            },
+            "Cloud Engineer": {
+                "basic": ["AWS", "Azure", "Google Cloud"],
+                "advanced": ["Cloud Networking", "Serverless Computing", "Cost Optimization"],
+                "pro": ["Multi-Cloud Management", "Cloud Security", "Edge Computing"]
+            }        };
+
+        // Handle Job Role Selection
+        $("#job-role").change(function() {
+            let selectedRole = $(this).val();
+            if (selectedRole) {
+                $("#required-skills").show();
+                $("#selected-job").text(selectedRole);
+                $("#basic-skills").html(jobSkills[selectedRole].basic.map(skill => `<li>${skill}</li>`).join(""));
+                $("#advanced-skills").html(jobSkills[selectedRole].advanced.map(skill => `<li>${skill}</li>`).join(""));
+                $("#pro-skills").html(jobSkills[selectedRole].pro.map(skill => `<li>${skill}</li>`).join(""));
+
+                let extractedSkills = {{ skills | tojson }};
+                let matchedSkills = extractedSkills.filter(skill => jobSkills[selectedRole].basic.concat(jobSkills[selectedRole].advanced, jobSkills[selectedRole].pro).includes(skill));
+                let missingSkills = jobSkills[selectedRole].basic.concat(jobSkills[selectedRole].advanced, jobSkills[selectedRole].pro).filter(skill => !extractedSkills.includes(skill));
+
+                $("#skill-comparison").show();
+                $("#matched-skills").html(matchedSkills.map(skill => `<li>${skill}</li>`).join(""));
+                $("#missing-skills").html(missingSkills.map(skill => `<li>${skill}</li>`).join(""));
+
+                $("#skill-selection-box").show();
+                $("#improve-skills").html(missingSkills.map(skill => `<option value="${skill}">${skill}</option>`).join(""));
+            } else {
+                $("#required-skills, #skill-comparison, #skill-selection-box, #roadmap-box").hide();
+            }
+        });
+// Learning Roadmap Data with YouTube Links
+const skillRoadmap = {
+    "Python": [
+        "[VIDEO] Python Full Course - <a href='https://www.youtube.com/watch?v=rfscVS0vtbw' target='_blank'>Python for Beginners</a>",
+        "Practice basics on <a href='https://www.codecademy.com/learn/learn-python-3' target='_blank'>Codecademy</a>",
+        "Learn OOP concepts - <a href='https://www.youtube.com/watch?v=Ej_02ICOIgs' target='_blank'>OOP Tutorial</a>",
+        "Build projects: <a href='https://www.youtube.com/watch?v=8ext9G7xspg' target='_blank'>12 Beginner Projects</a>",
+        "Advanced: <a href='https://www.youtube.com/watch?v=LHBE6Q9XlzI' target='_blank'>Data Science with Python</a>"
+    ],
+    "Java": [
+        "[VIDEO] Java Tutorial - <a href='https://www.youtube.com/watch?v=eIrMbAQSU34' target='_blank'>Java for Beginners</a>",
+        "Practice on <a href='https://www.codecademy.com/learn/learn-java' target='_blank'>Codecademy</a>",
+        "OOP Concepts - <a href='https://www.youtube.com/watch?v=w5ReZxTo4yc' target='_blank'>Java OOP</a>",
+        "Spring Boot - <a href='https://www.youtube.com/watch?v=vtPkZShrvXQ' target='_blank'>Spring Boot Crash Course</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=UmnCZ7-9yDY' target='_blank'>Java Projects</a>"
+    ],
+    "C++": [
+        "[VIDEO] C++ Tutorial - <a href='https://www.youtube.com/watch?v=vLnPwxZdW4Y' target='_blank'>C++ for Beginners</a>",
+        "Practice on <a href='https://www.learncpp.com/' target='_blank'>LearnCPP</a>",
+        "OOP in C++ - <a href='https://www.youtube.com/watch?v=Rub-JsjMhWY' target='_blank'>C++ OOP</a>",
+        "STL - <a href='https://www.youtube.com/watch?v=LyGlTmaWEPs' target='_blank'>Standard Template Library</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=GQp1zzTwrIg' target='_blank'>C++ Projects</a>"
+    ],
+    "JavaScript": [
+        "[VIDEO] JavaScript Crash Course - <a href='https://www.youtube.com/watch?v=hdI2bqOjy3c' target='_blank'>JS Basics</a>",
+        "Practice on <a href='https://www.codecademy.com/learn/introduction-to-javascript' target='_blank'>Codecademy</a>",
+        "DOM Manipulation - <a href='https://www.youtube.com/watch?v=0ik6X4DJKCc' target='_blank'>DOM Tutorial</a>",
+        "ES6+ - <a href='https://www.youtube.com/watch?v=NCwa_xi0Uuc' target='_blank'>Modern JavaScript</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=3PHXvlpOkf4' target='_blank'>15 JS Projects</a>"
+    ],
+    "HTML": [
+        "[VIDEO] HTML Tutorial - <a href='https://www.youtube.com/watch?v=qz0aGYrrlhU' target='_blank'>HTML Crash Course</a>",
+        "Practice on <a href='https://www.w3schools.com/html/' target='_blank'>W3Schools</a>",
+        "Semantic HTML - <a href='https://www.youtube.com/watch?v=kGW8Al_cga4' target='_blank'>HTML5 Semantic</a>",
+        "Forms - <a href='https://www.youtube.com/watch?v=fNcJuPIZ2WE' target='_blank'>HTML Forms</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=3sxyj63I5Fs' target='_blank'>HTML Projects</a>"
+    ],
+    "CSS": [
+        "[VIDEO] CSS Crash Course - <a href='https://www.youtube.com/watch?v=1Rs2ND1ryYc' target='_blank'>CSS Basics</a>",
+        "Practice on <a href='https://web.dev/learn/css/' target='_blank'>web.dev</a>",
+        "Flexbox - <a href='https://www.youtube.com/watch?v=JJSoEo8JSnc' target='_blank'>Flexbox Tutorial</a>",
+        "Grid - <a href='https://www.youtube.com/watch?v=9zBsdzdE4sM' target='_blank'>CSS Grid</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=z62f2k38s64' target='_blank'>CSS Projects</a>"
+    ],
+    "React": [
+        "[VIDEO] React Tutorial - <a href='https://www.youtube.com/watch?v=bMknfKXIFA8' target='_blank'>React Crash Course</a>",
+        "Practice on <a href='https://reactjs.org/tutorial/tutorial.html' target='_blank'>React Docs</a>",
+        "Hooks - <a href='https://www.youtube.com/watch?v=0awA5Uw6SJE' target='_blank'>React Hooks</a>",
+        "Redux - <a href='https://www.youtube.com/watch?v=CVpUuw9XSjY' target='_blank'>Redux Tutorial</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=ly3m6mv5qvg' target='_blank'>React Projects</a>"
+    ],
+    "Node.js": [
+        "[VIDEO] Node.js Tutorial - <a href='https://www.youtube.com/watch?v=Oe421EPjeBE' target='_blank'>Node Crash Course</a>",
+        "Practice on <a href='https://nodejs.dev/learn' target='_blank'>Node.js Docs</a>",
+        "Express - <a href='https://www.youtube.com/watch?v=L72fhGm1tfE' target='_blank'>Express Tutorial</a>",
+        "Authentication - <a href='https://www.youtube.com/watch?v=-RCnNyD0L-s' target='_blank'>Node Auth</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=fgTGADljAeg' target='_blank'>Node Projects</a>"
+    ],
+    "SQL": [
+        "[VIDEO] SQL Tutorial - <a href='https://www.youtube.com/watch?v=HXV3zeQKqGY' target='_blank'>SQL Basics</a>",
+        "Practice on <a href='https://www.w3schools.com/sql/' target='_blank'>W3Schools</a>",
+        "Advanced Queries - <a href='https://www.youtube.com/watch?v=7S_tz1z_5bA' target='_blank'>SQL Performance</a>",
+        "Database Design - <a href='https://www.youtube.com/watch?v=ztHopE5Wnpc' target='_blank'>DB Design</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=vo4pBVb2EhI' target='_blank'>SQL Projects</a>"
+    ],
+    "Machine Learning": [
+        "[VIDEO] ML Crash Course - <a href='https://www.youtube.com/watch?v=NWONeJKn6kc' target='_blank'>ML Algorithms</a>",
+        "Practice on <a href='https://www.kaggle.com/learn/intro-to-machine-learning' target='_blank'>Kaggle</a>",
+        "Scikit-learn - <a href='https://www.youtube.com/watch?v=0Lt9w-BxKFQ' target='_blank'>Scikit-learn</a>",
+        "Model Evaluation - <a href='https://www.youtube.com/watch?v=H1yp6BF1hX8' target='_blank'>ML Evaluation</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=ukzFI9rgwfU' target='_blank'>ML Projects</a>"
+    ],
+    "Deep Learning": [
+        "[VIDEO] Deep Learning - <a href='https://www.youtube.com/watch?v=aircAruvnKk' target='_blank'>Neural Networks</a>",
+        "Practice on <a href='https://www.tensorflow.org/tutorials' target='_blank'>TensorFlow</a>",
+        "CNN - <a href='https://www.youtube.com/watch?v=6_2hzRopPbQ' target='_blank'>CNN Tutorial</a>",
+        "RNN - <a href='https://www.youtube.com/watch?v=AsNTP8Kwu80' target='_blank'>RNN Tutorial</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=6_2hzRopPbQ' target='_blank'>DL Projects</a>"
+    ],
+    "TensorFlow": [
+        "[VIDEO] TensorFlow - <a href='https://www.youtube.com/watch?v=tPYj3fFJGjk' target='_blank'>TF Tutorial</a>",
+        "Practice on <a href='https://www.tensorflow.org/tutorials' target='_blank'>TF Docs</a>",
+        "Keras - <a href='https://www.youtube.com/watch?v=qFJeN9V1ZsI' target='_blank'>Keras Tutorial</a>",
+        "Deployment - <a href='https://www.youtube.com/watch?v=UbCWoMf80PY' target='_blank'>ML Deployment</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=6g4O5UOH304' target='_blank'>TF Projects</a>"
+    ],
+    "Pandas": [
+        "[VIDEO] Pandas - <a href='https://www.youtube.com/watch?v=vmEHCJofslg' target='_blank'>Pandas Tutorial</a>",
+        "Practice on <a href='https://pandas.pydata.org/docs/getting_started/intro_tutorials/index.html' target='_blank'>Pandas Docs</a>",
+        "Data Cleaning - <a href='https://www.youtube.com/watch?v=ua-CiDNNj30' target='_blank'>Data Cleaning</a>",
+        "Advanced - <a href='https://www.youtube.com/watch?v=daefaLgNkw0' target='_blank'>Advanced Pandas</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=eMOA1pPVUc4' target='_blank'>Pandas Projects</a>"
+    ],
+    "Data Science": [
+        "[VIDEO] Data Science - <a href='https://www.youtube.com/watch?v=EF5-0T9DlCM' target='_blank'>DS Project</a>",
+        "Practice on <a href='https://www.kaggle.com/learn/intro-to-data-science' target='_blank'>Kaggle</a>",
+        "Visualization - <a href='https://www.youtube.com/watch?v=GPVsHOlRBBI' target='_blank'>Data Viz</a>",
+        "Storytelling - <a href='https://www.youtube.com/watch?v=KEf8Hj3emKA' target='_blank'>Data Storytelling</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=r-uOLxNrNk8' target='_blank'>DS Projects</a>"
+    ],
+    "Cyber Security": [
+        "[VIDEO] Cyber Security - <a href='https://www.youtube.com/watch?v=3Kq1MIfTWCE' target='_blank'>Ethical Hacking</a>",
+        "Practice on <a href='https://tryhackme.com/' target='_blank'>TryHackMe</a>",
+        "Pen Testing - <a href='https://www.youtube.com/watch?v=3NjTK9ExBcM' target='_blank'>Pen Testing</a>",
+        "Cryptography - <a href='https://www.youtube.com/watch?v=jhXCTbFnK8o' target='_blank'>Crypto Basics</a>",
+        "CTFs: <a href='https://www.youtube.com/watch?v=oT3O8X7jOq8' target='_blank'>CTF Walkthrough</a>"
+    ],
+    "Networking": [
+        "[VIDEO] Networking - <a href='https://www.youtube.com/watch?v=qiQR5rTSshw' target='_blank'>Networking Basics</a>",
+        "Practice on <a href='https://www.netacad.com/courses/packet-tracer' target='_blank'>Cisco Packet Tracer</a>",
+        "TCP/IP - <a href='https://www.youtube.com/watch?v=PpsEaqJV_A0' target='_blank'>TCP/IP</a>",
+        "Security - <a href='https://www.youtube.com/watch?v=4_oLcmX5pU4' target='_blank'>Network Security</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=QKfk7YFILws' target='_blank'>Network Projects</a>"
+    ],
+    "AWS": [
+        "[VIDEO] AWS - <a href='https://www.youtube.com/watch?v=ulprqHHWlng' target='_blank'>AWS Services</a>",
+        "Practice on <a href='https://aws.amazon.com/getting-started/' target='_blank'>AWS Free Tier</a>",
+        "EC2 - <a href='https://www.youtube.com/watch?v=TxT6PNJts-s' target='_blank'>EC2 Tutorial</a>",
+        "Lambda - <a href='https://www.youtube.com/watch?v=EBSdyoO3goc' target='_blank'>Lambda Tutorial</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=Ia-UEYYR44s' target='_blank'>AWS Projects</a>"
+    ],
+    "Docker": [
+        "[VIDEO] Docker - <a href='https://www.youtube.com/watch?v=3c-iBn73dDE' target='_blank'>Docker Tutorial</a>",
+        "Practice on <a href='https://www.docker.com/101-tutorial' target='_blank'>Docker 101</a>",
+        "Compose - <a href='https://www.youtube.com/watch?v=HG6yIjZapSA' target='_blank'>Docker Compose</a>",
+        "Kubernetes - <a href='https://www.youtube.com/watch?v=7BKAJLQASRs' target='_blank'>Kubernetes</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=WcQ3b2kY9HU' target='_blank'>Docker Projects</a>"
+    ],
+    "Kubernetes": [
+        "[VIDEO] Kubernetes - <a href='https://www.youtube.com/watch?v=7BKAJLQASRs' target='_blank'>K8s Tutorial</a>",
+        "Practice on <a href='https://kubernetes.io/docs/tutorials/kubernetes-basics/' target='_blank'>K8s Docs</a>",
+        "Helm - <a href='https://www.youtube.com/watch?v=-ykwb1d0DXU' target='_blank'>Helm Tutorial</a>",
+        "Monitoring - <a href='https://www.youtube.com/watch?v=comqIEM_VrY' target='_blank'>K8s Monitoring</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=X48VuDVv0do' target='_blank'>K8s Projects</a>"
+    ],
+    "Statistics": [
+        "[VIDEO] Statistics - <a href='https://www.youtube.com/watch?v=xxpc-HPKN28' target='_blank'>Stats Basics</a>",
+        "Practice on <a href='https://www.khanacademy.org/math/statistics-probability' target='_blank'>Khan Academy</a>",
+        "Probability - <a href='https://www.youtube.com/watch?v=uzkc-qNVoOk' target='_blank'>Probability</a>",
+        "Hypothesis Testing - <a href='https://www.youtube.com/watch?v=VK-rnA3-41c' target='_blank'>Hypothesis Testing</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=1t5Klmqj6N0' target='_blank'>Stats Projects</a>"
+    ],
+    "Data Visualization": [
+        "[VIDEO] Data Viz - <a href='https://www.youtube.com/watch?v=GPVsHOlRBBI' target='_blank'>Data Viz Tutorial</a>",
+        "Practice on <a href='https://matplotlib.org/stable/tutorials/index.html' target='_blank'>Matplotlib</a>",
+        "Seaborn - <a href='https://www.youtube.com/watch?v=6GUZXDef2U0' target='_blank'>Seaborn</a>",
+        "Tableau - <a href='https://www.youtube.com/watch?v=6mBtTNggkUk' target='_blank'>Tableau</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=2U702NKW-xI' target='_blank'>Viz Projects</a>"
+    ],
+    "Scikit-learn": [
+        "[VIDEO] Scikit-learn - <a href='https://www.youtube.com/watch?v=0Lt9w-BxKFQ' target='_blank'>Sklearn Tutorial</a>",
+        "Practice on <a href='https://scikit-learn.org/stable/tutorial/index.html' target='_blank'>Sklearn Docs</a>",
+        "Pipelines - <a href='https://www.youtube.com/watch?v=URdnFlMEq3I' target='_blank'>Sklearn Pipelines</a>",
+        "Model Selection - <a href='https://www.youtube.com/watch?v=H1yp6BF1hX8' target='_blank'>Model Evaluation</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=M9Itm95JzL0' target='_blank'>Sklearn Projects</a>"
+    ],
+    "Neural Networks": [
+        "[VIDEO] Neural Networks - <a href='https://www.youtube.com/watch?v=aircAruvnKk' target='_blank'>NN Basics</a>",
+        "Practice on <a href='https://playground.tensorflow.org/' target='_blank'>TensorFlow Playground</a>",
+        "CNN - <a href='https://www.youtube.com/watch?v=6_2hzRopPbQ' target='_blank'>CNN</a>",
+        "RNN - <a href='https://www.youtube.com/watch?v=AsNTP8Kwu80' target='_blank'>RNN</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=Jy9-aGMB_TY' target='_blank'>NN Projects</a>"
+    ],
+    "Optimization": [
+        "[VIDEO] Optimization - <a href='https://www.youtube.com/watch?v=5ZlJ1W1zuYc' target='_blank'>Optimization</a>",
+        "Practice on <a href='https://www.coursera.org/learn/discrete-optimization' target='_blank'>Coursera</a>",
+        "Gradient Descent - <a href='https://www.youtube.com/watch?v=sDv4f4s2SB8' target='_blank'>Gradient Descent</a>",
+        "Hyperparameter Tuning - <a href='https://www.youtube.com/watch?v=1Z7o7S-RFJY' target='_blank'>Hyperparameter</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=6stDhEA0wFQ' target='_blank'>Optimization Projects</a>"
+    ],
+    "Big Data": [
+        "[VIDEO] Big Data - <a href='https://www.youtube.com/watch?v=1vbXmCrkT3Y' target='_blank'>Big Data</a>",
+        "Practice on <a href='https://www.databricks.com/learn' target='_blank'>Databricks</a>",
+        "Hadoop - <a href='https://www.youtube.com/watch?v=W3Zm6rjOq70' target='_blank'>Hadoop</a>",
+        "Spark - <a href='https://www.youtube.com/watch?v=6x0D38wRgYQ' target='_blank'>Spark</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=EQqDydU0XWw' target='_blank'>Big Data Projects</a>"
+    ],
+    "NLP": [
+        "[VIDEO] NLP - <a href='https://www.youtube.com/watch?v=X2vAabgKiuM' target='_blank'>NLP Basics</a>",
+        "Practice on <a href='https://www.kaggle.com/learn/natural-language-processing' target='_blank'>Kaggle</a>",
+        "Transformers - <a href='https://www.youtube.com/watch?v=xI0HHN5XKDo' target='_blank'>Transformers</a>",
+        "BERT - <a href='https://www.youtube.com/watch?v=7kLi8u2dJz0' target='_blank'>BERT</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=1lwddP0KUEg' target='_blank'>NLP Projects</a>"
+    ],
+    "Reinforcement Learning": [
+        "[VIDEO] RL - <a href='https://www.youtube.com/watch?v=JgvyzIkgxF0' target='_blank'>RL Basics</a>",
+        "Practice on <a href='https://gym.openai.com/' target='_blank'>OpenAI Gym</a>",
+        "Q-Learning - <a href='https://www.youtube.com/watch?v=5fHngyN8Qhw' target='_blank'>Q-Learning</a>",
+        "Deep RL - <a href='https://www.youtube.com/watch?v=W_gxLKSsSIE' target='_blank'>Deep RL</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=cO5g5qLrLSo' target='_blank'>RL Projects</a>"
+    ],
+    "Edge AI": [
+        "[VIDEO] Edge AI - <a href='https://www.youtube.com/watch?v=oVOnNXJv1aA' target='_blank'>Edge AI</a>",
+        "Practice on <a href='https://developer.nvidia.com/embedded/learn/jetson-ai-certification-programs' target='_blank'>NVIDIA</a>",
+        "TensorFlow Lite - <a href='https://www.youtube.com/watch?v=uHgRgdeXa6w' target='_blank'>TF Lite</a>",
+        "ONNX - <a href='https://www.youtube.com/watch?v=HnqjQNloh1Q' target='_blank'>ONNX</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=wqFq_0OEexk' target='_blank'>Edge AI Projects</a>"
+    ],
+    "AutoML": [
+        "[VIDEO] AutoML - <a href='https://www.youtube.com/watch?v=6_2hzRopPbQ' target='_blank'>AutoML</a>",
+        "Practice on <a href='https://cloud.google.com/automl' target='_blank'>Google AutoML</a>",
+        "TPOT - <a href='https://www.youtube.com/watch?v=J3qs4Rn0J6Y' target='_blank'>TPOT</a>",
+        "H2O.ai - <a href='https://www.youtube.com/watch?v=ukzFI9rgwfU' target='_blank'>H2O.ai</a>",
+        "Projects: <a href='https://www.youtube.com/watch?v=J3qs4Rn0J6Y' target='_blank'>AutoML Projects</a>"
+    ]
+};
+// Update the generateRoadmap function
+function generateRoadmap() {
+    let selectedSkills = $("#improve-skills").val();
+    if (selectedSkills.length > 0) {
+        $("#roadmap-box").show();
+        let roadmapContent = selectedSkills.map(skill => {
+            let steps = skillRoadmap[skill] || ["Start learning from online courses and practice with projects."];
+            
+            // Get YouTube video ID for this skill (first video in the list)
+            let youtubeLink = steps[0].match(/href='(.*?)'/);
+            let videoId = youtubeLink ? youtubeLink[1].split('v=')[1] : null;
+            
+            return `
+            <div class="skill-roadmap-item">
+                <h4>${skill} Learning Path</h4>
+                
+                ${videoId ? `
+                <div class="video-preview">
+                    <iframe width="300" height="169" 
+                            src="https://www.youtube.com/embed/${videoId}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                    </iframe>
+                </div>
+                ` : ''}
+                
+                <ul class="roadmap-steps">
+                    ${steps.map(step => `<li>${step}</li>`).join("")}
+                </ul>
+            </div>
+            <hr class="skill-divider">
+            `;
+        }).join("");
+        
+        $("#roadmap-steps").html(roadmapContent);
+    }
+}
+function updatePieChart(matchedSkills, missingSkills) {
+        const ctx = document.getElementById("skillPieChart").getContext("2d");
+        
+        // Destroy existing chart to avoid duplicate instances
+        if (window.skillChart) {
+            window.skillChart.destroy();
+        }
+
+        window.skillChart = new Chart(ctx, {
+            type: "pie",
+            data: {
+                labels: ["Skills You Have", "Skills to Improve"],
+                datasets: [{
+                    data: [matchedSkills.length, missingSkills.length],
+                    backgroundColor: ["#00c853", "#ff5252"], // Green for matched, Red for missing
+                    borderColor: ["#00c853", "#ff5252"],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: "white" // Adjust legend text color for dark mode
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Update Skill Comparison Section with Chart
+    $("#job-role").change(function() {
+        let selectedRole = $(this).val();
+        if (selectedRole) {
+            let extractedSkills = {{ skills | tojson }};
+            let matchedSkills = extractedSkills.filter(skill => 
+                jobSkills[selectedRole].basic.concat(jobSkills[selectedRole].advanced, jobSkills[selectedRole].pro).includes(skill)
+            );
+            let missingSkills = jobSkills[selectedRole].basic.concat(jobSkills[selectedRole].advanced, jobSkills[selectedRole].pro).filter(skill => 
+                !extractedSkills.includes(skill)
+            );
+
+            $("#skill-comparison").show();
+            $("#matched-skills").html(matchedSkills.map(skill => `<li>${skill}</li>`).join(""));
+            $("#missing-skills").html(missingSkills.map(skill => `<li>${skill}</li>`).join(""));
+
+            // Update Pie Chart
+            updatePieChart(matchedSkills, missingSkills);
+        } else {
+            $("#skill-comparison").hide();
+        }
+    });
+function animateScore(finalScore) {
+            let currentScore = 0;
+            let scoreElement = document.getElementById("animated-score");
+            let progressBar = document.getElementById("progress-bar");
+
+            let interval = setInterval(() => {
+                if (currentScore >= finalScore) {
+                    clearInterval(interval);
+                } else {
+                    currentScore += 1; 
+                    scoreElement.textContent = currentScore;
+                    progressBar.style.width = currentScore + "%";
+                }
+            }, 20);
+        }
+
+        // Run animation when page loads
+        document.addEventListener("DOMContentLoaded", function() {
+            let finalScore = {{ resume_score }}; // Score passed from Flask
+            animateScore(finalScore);
+        });
+    </script>
+
+</body>
+</html>  

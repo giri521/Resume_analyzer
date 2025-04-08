@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            background-color: rgba(20, 20, 20, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            width: 320px;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px cyan;
+        }
+h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px cyan;
+        }
+
+        .input-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: #1e1e1e;
+            color: #fff;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            transition: 0.3s ease-in-out;
+        }
+        input:focus {
+            box-shadow: 0 0 15px cyan;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: cyan;
+            color: #000;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 15px cyan;
+            transition: 0.3s ease-in-out;
+        }
+        button:hover {
+            background: #00ffff;
+            box-shadow: 0 0 20px cyan;
+        }
+        .loader {
+            display: none;
+            margin: 10px auto;
+            border: 5px solid rgba(0, 255, 255, 0.3);
+            border-top: 5px solid cyan;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hidden {
+            display: none;
+        }
+        p a {
+            color: cyan;
+            text-decoration: none;
+        }
+        p a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            document.getElementById('login-button').style.display = 'none';
+            document.getElementById('loader').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('login-form').submit();
+            }, 2000); // Simulate loading
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+                <h2>SKILL GAP ANALYSIS</h2>
+
+        <h3>Login</h3>
+        <form id="login-form" method="POST" action="{{ url_for('login') }}" onsubmit="handleLogin(event)">
+            <div class="input-box">
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <button id="login-button" type="submit">Login</button>
+            <div id="loader" class="loader"></div>
+        </form>
+        <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
+    </div>
+</body>
+</html> 

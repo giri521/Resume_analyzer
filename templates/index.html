@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2 {
+            color: #00ffff;
+            text-shadow: 0 0 8px rgba(255, 119, 255, 0.8), 0 0 18px rgba(255, 119, 255, 0.6), 0 0 25px rgba(255, 119, 255, 0.4);
+            margin: 30px 0;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .upload-box {
+            background-color: #222222;
+            padding: 25px;
+            border-radius: 10px;
+            width: 50%;
+            margin: auto;
+            box-shadow: 0 0 15px rgba(255, 119, 255, 0.8);
+            transition: box-shadow 0.3s ease;
+        }
+
+        input[type="file"] {
+            background-color: #333333;
+            color: white;
+            padding: 12px;
+            border: 1px solid #00ffff;
+            border-radius: 8px;
+            width: 80%;
+            margin: 10px 0;
+            text-align: center;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="file"]:hover {
+            background-color: #444444;
+            box-shadow: 0 0 10px rgba(255, 119, 255, 0.8), 0 0 20px rgba(255, 119, 255, 0.6);
+        }
+
+        button {
+            background-color: #00ffff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(255, 119, 255, 0.8);
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff66cc;
+            box-shadow: 0 0 20px rgba(255, 119, 255, 1), 0 0 30px rgba(255, 119, 255, 0.9);
+        }
+
+        .tips {
+            margin-top: 50px;
+            background: #1f1f1f;
+            padding: 30px;
+            border-radius: 12px;
+            width: 70%;
+            margin: auto;
+            box-shadow: 0 0 15px rgba(255, 119, 255, 0.8);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .tips h2 {
+            color: #00ffff;
+            font-size: 2rem;
+            text-align: center;
+            text-shadow: 0 0 8px rgba(255, 119, 255, 0.8), 0 0 18px rgba(255, 119, 255, 0.6);
+        }
+
+        .tips ul {
+            color: #bbb;
+            list-style: none;
+            padding: 0;
+        }
+
+        .tips ul li {
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
+
+        .tips ul li::before {
+            content: "✅ ";
+            color: #ff99ff;
+        }
+
+        .videos {
+            margin-top: 60px;
+        }
+
+        .video-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .video-container iframe {
+            width: 320px;
+            height: 180px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 119, 255, 0.6);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .video-container iframe:hover {
+            box-shadow: 0 0 25px rgba(255, 119, 255, 1), 0 0 40px rgba(255, 119, 255, 0.9);
+        }
+
+        .user-info {
+            margin-top: 30px;
+            color: #00ffff;
+            font-size: 1.3rem;
+            text-shadow: 0 0 5px rgba(255, 119, 255, 0.7);
+        }
+
+        .logout-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.8);
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #ff3333;
+            box-shadow: 0 0 20px rgba(255, 77, 77, 1);
+        }
+
+        .logout-btn:focus {
+            outline: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Skill Gap Analysis</h1>
+        <!-- Display username if logged in -->
+        {% if username %}
+            <div class="user-info">
+                <p>Welcome, {{ username }}!</p>
+                <a href="{{ url_for('logout') }}">
+                    <button class="logout-btn">Logout</button>
+                </a>
+            </div>
+        {% else %}
+            <div class="user-info">
+                <p>Please log in to use the Resume Analyzer.</p>
+            </div>
+        {% endif %}
+        
+        <div class="upload-box">
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="resume" required><br><br>
+                <button type="submit">Upload Resume</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 🔥 Resume Tips Section -->
+    <div class="tips">
+        <h2>🔥 Tips to Prepare a High-Scoring Resume</h2>
+        <ul>
+            <li><strong>Include Essential Sections</strong>: Full Name, Contact Info, Education, Skills, Work Experience, Projects, Certifications.</li>
+            <li><strong>Use Keywords from the Job Role</strong>: Match job-specific skills like Python, ML, Java, SQL.</li>
+            <li><strong>Keep it Short & Professional</strong>: 1 page for freshers, 1-2 pages for experienced candidates.</li>
+            <li><strong>Highlight Achievements, Not Just Duties</strong>: "Developed an e-commerce site using Java & Spring Boot, improving engagement by 40%."</li>
+            <li><strong>Use a Clean, ATS-Friendly Format</strong>: Avoid tables, images, fancy designs. Use fonts like Arial, Calibri.</li>
+        </ul>
+    </div>
+
+    <!-- 🎥 Resume Tutorial Videos Section -->
+    <div class="videos">
+        <h2>🔥 Learn How to Make a High-Scoring Resume</h2>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/yp693O87GmM" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/y8YH0Qbu5h4" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/J-4Fv8nq1iA" allowfullscreen></iframe>
+        </div>
+    </div>
+</body>
+</html>
