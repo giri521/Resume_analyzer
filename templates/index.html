@@ -6,157 +6,301 @@
     <title>Resume Analyzer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #4fc3f7;
+            --secondary: #ff4081;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #e6f7ff;
+            --success: #69f0ae;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         body {
-            background-color: #121212;
-            color: white;
-            font-family: 'Arial', sans-serif;
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
+            line-height: 1.6;
         }
 
         h1, h2 {
-            color: #00ffff;
-            text-shadow: 0 0 8px rgba(255, 119, 255, 0.8), 0 0 18px rgba(255, 119, 255, 0.6), 0 0 25px rgba(255, 119, 255, 0.4);
+            color: var(--primary);
             margin: 30px 0;
             font-size: 2.5rem;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1::after, h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            margin: 15px auto;
+            border-radius: 2px;
         }
 
         .container {
-            margin-top: 20px;
+            margin-top: 40px;
             text-align: center;
+            perspective: 1000px;
         }
 
         .upload-box {
-            background-color: #222222;
-            padding: 25px;
-            border-radius: 10px;
+            background: rgba(26, 26, 46, 0.8);
+            padding: 30px;
+            border-radius: 16px;
             width: 50%;
-            margin: auto;
-            box-shadow: 0 0 15px rgba(255, 119, 255, 0.8);
-            transition: box-shadow 0.3s ease;
+            margin: 0 auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(79, 195, 247, 0.2);
+            transform-style: preserve-3d;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .upload-box:hover {
+            transform: translateY(-5px) rotateX(5deg);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
 
         input[type="file"] {
-            background-color: #333333;
+            background: rgba(31, 31, 71, 0.6);
             color: white;
-            padding: 12px;
-            border: 1px solid #00ffff;
+            padding: 15px;
+            border: 2px dashed var(--primary);
             border-radius: 8px;
             width: 80%;
-            margin: 10px 0;
+            margin: 20px 0;
             text-align: center;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         input[type="file"]:hover {
-            background-color: #444444;
-            box-shadow: 0 0 10px rgba(255, 119, 255, 0.8), 0 0 20px rgba(255, 119, 255, 0.6);
+            background: rgba(31, 31, 71, 0.8);
+            border-color: var(--secondary);
+            transform: scale(1.01);
+        }
+
+        input[type="file"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.4);
         }
 
         button {
-            background-color: #00ffff;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 12px 20px;
+            padding: 14px 28px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
             text-transform: uppercase;
-            box-shadow: 0 0 10px rgba(255, 119, 255, 0.8);
-            transition: 0.3s;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         button:hover {
-            background-color: #ff66cc;
-            box-shadow: 0 0 20px rgba(255, 119, 255, 1), 0 0 30px rgba(255, 119, 255, 0.9);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 64, 129, 0.5);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0));
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        button:hover::after {
+            transform: translateX(100%);
         }
 
         .tips {
-            margin-top: 50px;
-            background: #1f1f1f;
+            margin: 60px auto;
+            background: rgba(26, 26, 46, 0.8);
             padding: 30px;
-            border-radius: 12px;
+            border-radius: 16px;
             width: 70%;
-            margin: auto;
-            box-shadow: 0 0 15px rgba(255, 119, 255, 0.8);
-            transition: box-shadow 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(79, 195, 247, 0.2);
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .tips:hover {
+            transform: translateY(-5px) rotateY(5deg);
         }
 
         .tips h2 {
-            color: #00ffff;
+            color: var(--primary);
             font-size: 2rem;
             text-align: center;
-            text-shadow: 0 0 8px rgba(255, 119, 255, 0.8), 0 0 18px rgba(255, 119, 255, 0.6);
         }
 
         .tips ul {
-            color: #bbb;
+            color: #d1d1e0;
             list-style: none;
             padding: 0;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .tips ul li {
-            margin: 15px 0;
-            font-size: 1.1rem;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(31, 31, 71, 0.4);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .tips ul li:hover {
+            background: rgba(31, 31, 71, 0.6);
+            transform: translateX(10px);
         }
 
         .tips ul li::before {
-            content: "✅ ";
-            color: #ff99ff;
+            content: "▹";
+            color: var(--secondary);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
         }
 
         .videos {
-            margin-top: 60px;
+            margin: 80px auto;
+            perspective: 1000px;
         }
 
         .video-container {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 30px;
             flex-wrap: wrap;
+            padding: 20px;
         }
 
         .video-container iframe {
             width: 320px;
             height: 180px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(255, 119, 255, 0.6);
-            transition: box-shadow 0.3s ease;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
         }
 
         .video-container iframe:hover {
-            box-shadow: 0 0 25px rgba(255, 119, 255, 1), 0 0 40px rgba(255, 119, 255, 0.9);
+            transform: scale(1.05) rotateY(10deg);
+            box-shadow: 0 15px 30px rgba(79, 195, 247, 0.4);
         }
 
         .user-info {
-            margin-top: 30px;
-            color: #00ffff;
-            font-size: 1.3rem;
-            text-shadow: 0 0 5px rgba(255, 119, 255, 0.7);
+            margin: 30px auto;
+            color: var(--primary);
+            font-size: 1.2rem;
+            text-align: center;
+            max-width: 600px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(31, 31, 71, 0.4);
         }
 
         .logout-btn {
-            background-color: #ff4d4d;
+            background: rgba(255, 64, 129, 0.8);
             color: white;
-            padding: 10px;
+            padding: 10px 20px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1.1rem;
-            box-shadow: 0 0 10px rgba(255, 77, 77, 0.8);
-            transition: 0.3s;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 15px;
         }
 
         .logout-btn:hover {
-            background-color: #ff3333;
-            box-shadow: 0 0 20px rgba(255, 77, 77, 1);
+            background: rgba(255, 64, 129, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4);
         }
 
-        .logout-btn:focus {
-            outline: none;
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .upload-box, .tips {
+                width: 90%;
+                padding: 20px;
+            }
+            
+            h1, h2 {
+                font-size: 2rem;
+            }
+            
+            .video-container iframe {
+                width: 280px;
+                height: 160px;
+            }
         }
 
+        /* 3D Card effect for upload box */
+        .upload-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(79, 195, 247, 0.2), rgba(255, 64, 129, 0.1));
+            transform: translateZ(-20px);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .upload-box:hover::before {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -184,9 +328,9 @@
         </div>
     </div>
 
-    <!-- 🔥 Resume Tips Section -->
+    <!-- Resume Tips Section -->
     <div class="tips">
-        <h2>🔥 Tips to Prepare a High-Scoring Resume</h2>
+        <h2>Tips to Prepare a High-Scoring Resume</h2>
         <ul>
             <li><strong>Include Essential Sections</strong>: Full Name, Contact Info, Education, Skills, Work Experience, Projects, Certifications.</li>
             <li><strong>Use Keywords from the Job Role</strong>: Match job-specific skills like Python, ML, Java, SQL.</li>
@@ -196,9 +340,9 @@
         </ul>
     </div>
 
-    <!-- 🎥 Resume Tutorial Videos Section -->
+    <!-- Resume Tutorial Videos Section -->
     <div class="videos">
-        <h2>🔥 Learn How to Make a High-Scoring Resume</h2>
+        <h2>Learn How to Make a High-Scoring Resume</h2>
         <div class="video-container">
             <iframe src="https://www.youtube.com/embed/yp693O87GmM" allowfullscreen></iframe>
             <iframe src="https://www.youtube.com/embed/y8YH0Qbu5h4" allowfullscreen></iframe>
