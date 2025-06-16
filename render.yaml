@@ -1,9 +1,12 @@
 services:
   - type: web
-    name: your-app-name
+    name: your-flask-app  # Change to your app name
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    buildCommand: |
+      pip install --upgrade pip setuptools wheel
+      pip install numpy==1.23.5 cython==0.29.36  # Explicit versions for compatibility
+      pip install scikit-learn==0.24.2 --no-build-isolation  # Avoids build conflicts
+      pip install -r requirements.txt
+    startCommand: gunicorn app:app  # Replace `app:app` with your Flask entry point
     python:
-      version: 3.11.11
-
+      version: 3.9.16  # Python 3.9 recommended for older scikit-learn/numpy
