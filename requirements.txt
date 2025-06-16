@@ -1,3 +1,7 @@
+pip>=25.1.1
+setuptools>=70.0.0
+wheel
+
 Flask==2.2.5
 Werkzeug==2.2.3
 gunicorn==20.1.0
