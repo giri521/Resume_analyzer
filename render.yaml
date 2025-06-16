@@ -1,19 +1,9 @@
 services:
   - type: web
-    name: resume-analyzer
-    runtime: python
-    buildCommand: |
-      pip install --upgrade pip setuptools wheel
-      pip install -r requirements.txt
-      python -m spacy download en_core_web_sm
+    name: your-app-name
+    env: python
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
-    envVars:
-      - key: SECRET_KEY
-        generateValue: true
-      - key: ADMIN_PASSWORD
-        value: your-secure-password
-    disk:
-      name: uploads
-      mountPath: /opt/render/project/src/uploads
-      sizeGB: 1
+    python:
+      version: 3.11.11
 
